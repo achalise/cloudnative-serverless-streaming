@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: my-app-deployment
+  name: my-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app-deployment
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: my-app-deployment
+    spec:
+      containers:
+        - image: claimservice:0.0.1-SNAPSHOT
+          name: claimservice
+          env:
+            - name: spring_profiles_active
+              value: it
+          resources: {}
+status: {}
