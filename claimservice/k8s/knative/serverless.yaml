@@ -1,0 +1,12 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: spring-function-on-kubernetes
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/target: "20"
+    spec:
+      containers:
+        - image: achalise/claimservice

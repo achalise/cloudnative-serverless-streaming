@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
     app: my-app-deployment
   name: my-app-deployment
@@ -13,15 +12,24 @@ spec:
   strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: my-app-deployment
     spec:
       containers:
+        #- image: docker.io/achalise/claimservice:latest
         - image: claimservice:0.0.1-SNAPSHOT
           name: claimservice
           env:
             - name: spring_profiles_active
-              value: it
+              value: cf
+            - name: KAFKA_USER
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: kafka-secrets
+            - name: KAFKA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: kafka-secrets
           resources: {}
-status: {}
