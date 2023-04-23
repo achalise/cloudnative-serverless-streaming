@@ -107,5 +107,48 @@ Content-Type: application/json
 Create an AWS EKS cluster by following [instructions](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html)
 
 ### Running on AWS Lambda
+
+SpringCloudFunction provides adapters for various serverless platforms. For AWS Lambda, we need
+the spring cloud function adapter for aws and the thin jar plugin to produce the shaded jar for deployment.
+
+```
+implementation("org.springframework.cloud:spring-cloud-function-adapter-aws")
+implementation("org.springframework.boot.experimental:spring-boot-thin-gradle-plugin:1.0.29.RELEASE")
+```
+and the following declarations in the `build.gradle.kts`
+
+```
+tasks.assemble{
+	dependsOn("shadowJar")
+}
+
+tasks.withType<ShadowJar> {
+    archiveClassifier.set("aws")
+	dependencies {
+		exclude("org.springframework.cloud:spring-cloud-function-web")
+	}
+	// Required for Spring
+	mergeServiceFiles()
+	append("META-INF/spring.handlers")
+	append("META-INF/spring.schemas")
+	append("META-INF/spring.tooling")
+	transform(PropertiesFileTransformer::class.java) {
+		paths.add("META-INF/spring.factories")
+		mergeStrategy = "append"
+	}
+}
+
+tasks.withType<Jar> {
+	manifest {
+		attributes["Start-Class"] = "com.arun.claimservice.ClaimserviceApplication"
+	}
+}
+
+```
+We also need a request handler to process incoming requests and Spring provides a generic request handler for this:
+`org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest`
+
+Following environment variables need to be defined in the function configuration - `spring_profiles_active, KAFKA_USR, KAFKA_PASSWORD`
+
 ### Running on TAS
 ### Running on KNative
