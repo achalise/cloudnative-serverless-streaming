@@ -1,4 +1,15 @@
-# Serverless and Data Streaming 
+# Serverless and Data Streaming
+1. [Introduction](#introduction-)
+   1. [Claim Service](##claim-service)
+      * [Running Locally](#running-locally-for-development)
+      * [Running on local k8s](#running-on-local-k8s-cluster)
+      * [Running on AWS Lambda](#running-on-aws-lambda)
+      * [Running on AWS EKS](#running-on-aws-eks)
+      * [Running on Tanzu Application Service(TAS)](#running-on-tas)
+      * [Running on OpenShift](#running-on-openshift)
+      * [Running on KNative](#running-on-knative)
+
+# Introduction 
 
 A sample project exploring event driven architecture and stream processing on serverless platforms.
 
