@@ -65,7 +65,7 @@ will produce following response:
 
 `k3s` is lightweight distribution of Kubernetes perfect for resource constrained environments and a good choice for local
 development environment. And [k3d](https://k3d.io/v5.4.9/#installation) can be used to run [k3s](https://k3s.io/) locally on Docker.
-Also ensure [https://kubernetes.io/docs/reference/kubectl/] (kubectl) is installed to connect to the cluster.
+Also ensure [kubectl](https://kubernetes.io/docs/reference/kubectl/) is installed to connect to the cluster.
 Create a local cluster with name `dev`
 `k3d cluster create dev`
 `kubectl get nodes` to list the nodes in the cluster.
@@ -148,7 +148,8 @@ tasks.withType<Jar> {
 We also need a request handler to process incoming requests and Spring provides a generic request handler for this:
 `org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest`
 
-Following environment variables need to be defined in the function configuration - `spring_profiles_active, KAFKA_USR, KAFKA_PASSWORD`
+Following environment variables need to be defined for this function example  - `spring_profiles_active, KAFKA_USR, KAFKA_PASSWORD`
 
 ### Running on TAS
 ### Running on KNative
+### Running on OpenShift
