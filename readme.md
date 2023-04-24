@@ -99,13 +99,6 @@ Content-Type: application/json
 }
 ```
 
-
-
-### Running on AWS EKS
-#### Prerequisites
-
-Create an AWS EKS cluster by following [instructions](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html)
-
 ### Running on AWS Lambda
 
 SpringCloudFunction provides adapters for various serverless platforms. For AWS Lambda, we need
@@ -153,3 +146,9 @@ Following environment variables need to be defined for this function example  - 
 ### Running on TAS
 ### Running on KNative
 ### Running on OpenShift
+### Running on AWS EKS
+#### Prerequisites
+
+Create an AWS EKS cluster by following [instructions](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) 
+...
+
