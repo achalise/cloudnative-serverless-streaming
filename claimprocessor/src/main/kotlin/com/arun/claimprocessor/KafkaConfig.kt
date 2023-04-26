@@ -1,5 +1,6 @@
 package com.arun.claimprocessor
 
+import com.arun.claimprocessor.models.ClaimCreatedEvent
 import com.arun.claimprocessor.models.ClaimRequest
 import com.arun.claimprocessor.models.FraudCheckResult
 import com.arun.claimprocessor.models.PaymentResult
@@ -25,8 +26,6 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import org.springframework.kafka.support.serializer.JsonDeserializer
 import org.springframework.kafka.support.serializer.JsonSerializer
-import kotlin.reflect.KClass
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 
 @Configuration
@@ -71,7 +70,7 @@ class KafkaConfig {
 
     @Bean
     fun claimsConsumerFactory(): ConsumerFactory<String, ClaimRequest> {
-        return DefaultKafkaConsumerFactory(configPropertiesForClass(ClaimRequest::class.java.name))
+        return DefaultKafkaConsumerFactory(configPropertiesForClass(ClaimCreatedEvent::class.java.name))
     }
 
     @Bean
@@ -96,24 +95,31 @@ class KafkaConfig {
     }
 
     @Bean
-    fun paymentMessageListener(fraudCheckFunction: (ClaimRequest) -> FraudCheckResult,
-                        kafkaTemplate: KafkaTemplate<String, Any>,
-                        paymentFunction: (FraudCheckResult) -> PaymentResult): PaymentMessageListener {
-        return PaymentMessageListener(fraudCheckFunction, kafkaTemplate, paymentFunction)
+    fun paymentMessageListener(
+        fraudCheckFunction: (ClaimCreatedEvent) -> FraudCheckResult,
+        kafkaTemplate: KafkaTemplate<String, Any>,
+        paymentFunction: (FraudCheckResult) -> PaymentResult
+    ): PaymentMessageListener {
+        return PaymentMessageListener(kafkaTemplate, paymentFunction)
     }
 
     @Bean
-    fun messageListener(fraudCheckFunction: (ClaimRequest) -> FraudCheckResult,
-                        kafkaTemplate: KafkaTemplate<String, Any>,
-                        paymentFunction: (FraudCheckResult) -> PaymentResult): ClaimsMessageListener {
-       return ClaimsMessageListener(fraudCheckFunction, kafkaTemplate, paymentFunction)
+    fun messageListener(
+        fraudCheckFunction: (ClaimCreatedEvent) -> FraudCheckResult,
+        kafkaTemplate: KafkaTemplate<String, Any>,
+        paymentFunction: (FraudCheckResult) -> PaymentResult
+    ): ClaimsMessageListener {
+        return ClaimsMessageListener(fraudCheckFunction, kafkaTemplate)
     }
 
-    @KafkaListener(topics = ["PAYMENTS"], groupId = "CONSUMER_ONE",
-        containerFactory = "paymentRequestKafkaListenerContainerFactory")
-    class PaymentMessageListener(val fraudchrckFN: (ClaimRequest) -> FraudCheckResult,
-                          val kafkaTemplate: KafkaTemplate<String, Any>,
-                          val paymentFunction: (FraudCheckResult) -> PaymentResult) {
+    @KafkaListener(
+        topics = ["PAYMENTS"], groupId = "CONSUMER_ONE",
+        containerFactory = "paymentRequestKafkaListenerContainerFactory"
+    )
+    class PaymentMessageListener(
+        private val kafkaTemplate: KafkaTemplate<String, Any>,
+        val paymentFunction: (FraudCheckResult) -> PaymentResult
+    ) {
         private val logger = LoggerFactory.getLogger(PaymentMessageListener::class.java)
 
         @KafkaHandler
@@ -128,20 +134,23 @@ class KafkaConfig {
         }
     }
 
-    @KafkaListener(topics = ["CLAIMS"], groupId = "CONSUMER_ONE",
-        containerFactory = "claimsKafkaListenerContainerFactory")
-    class ClaimsMessageListener(val fraudchrckFN: (ClaimRequest) -> FraudCheckResult,
-                          val kafkaTemplate: KafkaTemplate<String, Any>,
-                          val paymentFunction: (FraudCheckResult) -> PaymentResult) {
+    @KafkaListener(
+        topics = ["CLAIMS"], groupId = "CONSUMER_ONE",
+        containerFactory = "claimsKafkaListenerContainerFactory"
+    )
+    class ClaimsMessageListener(
+        val fraudchrckFN: (ClaimCreatedEvent) -> FraudCheckResult,
+        private val kafkaTemplate: KafkaTemplate<String, Any>,
+    ) {
         private val logger = LoggerFactory.getLogger(ClaimsMessageListener::class.java)
 
         @KafkaHandler(isDefault = true)
-        fun procesClaiMessage(claimRequest: ClaimRequest) {
-            logger.info("Received claim $claimRequest")
-            val res = fraudchrckFN(claimRequest)
+        fun processClaimMessage(claimCreatedEvent: ClaimCreatedEvent) {
+            logger.info("Received claim $claimCreatedEvent")
+            val res = fraudchrckFN(claimCreatedEvent)
             logger.info("Fraudcheck result $res")
             val result = kafkaTemplate.send("PAYMENTS", res)
-            result.thenAccept{
+            result.thenAccept {
                 logger.info("Successfully published payment request $it")
             }
         }

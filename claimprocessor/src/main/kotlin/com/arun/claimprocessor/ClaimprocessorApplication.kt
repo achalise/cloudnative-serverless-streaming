@@ -2,6 +2,7 @@ package com.arun.claimprocessor
 
 import com.arun.claimprocessor.functions.performFraudCheck
 import com.arun.claimprocessor.functions.performPayment
+import com.arun.claimprocessor.models.ClaimCreatedEvent
 import com.arun.claimprocessor.models.ClaimRequest
 import com.arun.claimprocessor.models.FraudCheckResult
 import com.arun.claimprocessor.models.PaymentResult
@@ -25,7 +26,7 @@ class ClaimprocessorApplication {
 	}
 
 	@Bean
-	fun fraudCheckFunction(fraudCheckService: FraudCheckService): (ClaimRequest) -> FraudCheckResult {
+	fun fraudCheckFunction(fraudCheckService: FraudCheckService): (ClaimCreatedEvent) -> FraudCheckResult {
 		return performFraudCheck(fraudCheckService)
 	}
 

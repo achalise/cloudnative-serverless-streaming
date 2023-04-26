@@ -12,11 +12,11 @@ interface MessageService {
     }
 }
 
-class KafkaMessageService(private val kafkaTemplate: KafkaTemplate<String, String>): MessageService {
+class KafkaMessageService(private val kafkaTemplate: KafkaTemplate<String, String>, private val claimTopic: String): MessageService {
     private val logger = LoggerFactory.getLogger(MessageService::class.java)
     private val objectMapper = jacksonObjectMapper()
     override fun publishClaimCreatedEvent(event: ClaimCreatedEvent): Mono<SendMessageResult> {
-        return Mono.fromFuture(kafkaTemplate.send("ClaimCreated", objectMapper.writeValueAsString(event)).completable())
+        return Mono.fromFuture(kafkaTemplate.send(claimTopic, objectMapper.writeValueAsString(event)).completable())
             .map { SendMessageResult("SUCCESS") }
             .doOnSuccess {
                 logger.info("Successfully published event $event")

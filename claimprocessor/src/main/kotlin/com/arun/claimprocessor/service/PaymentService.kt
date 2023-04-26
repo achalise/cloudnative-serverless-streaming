@@ -7,7 +7,7 @@ import com.arun.claimprocessor.models.StatusCode
 
 class PaymentService {
     fun performPayment(fraudCheckResult: FraudCheckResult): PaymentResult {
-        return PaymentResult(fraudCheckResult.claimRequest, Status(StatusCode.PAYMENT_PASSED, "Payment Successful"))
+        val (correlationId, claimRequest) = fraudCheckResult
+        return PaymentResult(correlationId, claimRequest, Status(StatusCode.PAYMENT_PASSED, "Payment Successful"))
     }
-
 }
