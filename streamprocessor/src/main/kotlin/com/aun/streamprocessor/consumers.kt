@@ -5,24 +5,23 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.SingletonSupport
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.kstream.KStream
 import org.slf4j.LoggerFactory
+import org.slf4j.event.KeyValuePair
+import java.util.Collections
 
 val logger = LoggerFactory.getLogger("ClaimsConsumer")
 
-fun claims(): (KStream<String, ClaimRequest>) -> Unit {
+fun claims(): (ByteArray) -> Unit {
     return {
-        it.peek { key, value ->
-            logger.info("Received $key and value: $value")
-        }
+        logger.info("Received count ${String(it)}")
     }
 }
-
-fun processClaim(): (ByteArray) -> ClaimRequest {
+fun processClaim(): (ByteArray) -> ClaimCreatedEvent {
     return {
-        logger.info("Processed claim $it")
+        logger.info("Processed claim ${String(it)}")
         val stringValue = String(it)
-        logger.info("String value ${stringValue}")
         val mapper = ObjectMapper().registerModule(
             KotlinModule.Builder()
                 .withReflectionCacheSize(512)
@@ -33,13 +32,13 @@ fun processClaim(): (ByteArray) -> ClaimRequest {
                 .configure(KotlinFeature.StrictNullChecks, false)
                 .build()
         )
-        mapper.readValue<ClaimRequest>(stringValue)
+        mapper.readValue<ClaimCreatedEvent>(stringValue)
     }
 }
 
 fun processClaimRequest(): (ByteArray) -> String {
     return {
-        logger.info("Processed Claim Request $it")
+        logger.info("Processed Claim Request ${String(it)}")
         "PROCESSED"
     }
 }

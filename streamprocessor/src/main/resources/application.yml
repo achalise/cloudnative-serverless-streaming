@@ -1,30 +1,50 @@
 spring:
+  application:
+    name: streams-app
   kafka:
-    bootstrap-servers: localhost:9092
+    streams:
+      bootstrap-servers: localhost:9092
   cloud:
     stream:
       kafka:
         binder:
+          configuration:
+            commit.interval.ms: 100
+            default:
+              key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+              value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
           consumer:
             configuration:
               value.deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
               key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
         bindings:
+          claimEvents-in-0:
+            consumer:
+              configuration:
+                value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+                key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
           claimProcessor-in-0:
             consumer:
               configuration:
-                value.deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+                value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
                 key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
           claimRequestProcessor-in-0:
             consumer:
               configuration:
-                value.deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+                value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
                 key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
       function:
-         bindings:
-           claimProcessor-in-0: CLAIMS
-           claimProcessor-out-0: sinkinput
-           claimRequestProcessor-in-0: sinkinput
-           claimRequestProcessor-out-0: sinkoutput
-    function:
-      definition: claimProcessor;claimRequestProcessor
+         definition: claimProcessor;claimRequestProcessor;claimEvents
+      bindings:
+        claimProcessor-in-0:
+            destination: CLAIMS
+        claimProcessor-out-0:
+            destination: sinkinput
+        claimRequestProcessor-in-0:
+            destination: sinkinput
+        claimRequestProcessor-out-0:
+            destination: sinkoutput
+        claimEvents-in-0:
+            destination: event-count
+        claimEvents-out-0:
+            destination: streamout
