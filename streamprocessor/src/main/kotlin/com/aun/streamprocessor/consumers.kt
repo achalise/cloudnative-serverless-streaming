@@ -3,15 +3,11 @@ package com.aun.streamprocessor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.SingletonSupport
 import com.fasterxml.jackson.module.kotlin.readValue
-import org.apache.kafka.streams.KeyValue
-import org.apache.kafka.streams.kstream.KStream
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.event.KeyValuePair
-import java.util.Collections
 
-val logger = LoggerFactory.getLogger("ClaimsConsumer")
+val logger: Logger = LoggerFactory.getLogger("ClaimsConsumer")
 
 fun claims(): (ByteArray) -> Unit {
     return {
