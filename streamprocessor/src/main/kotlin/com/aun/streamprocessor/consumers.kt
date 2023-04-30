@@ -3,17 +3,23 @@ package com.aun.streamprocessor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 val logger: Logger = LoggerFactory.getLogger("ClaimsConsumer")
 
-fun claims(): (ByteArray) -> Unit {
+fun claims(): (ByteArray) -> ClaimCount {
     return {
-        logger.info("Received count ${String(it)}")
+        val str = String(it)
+        logger.info("Received ClaimCount $str")
+        val claimCount = ObjectMapper().registerModule(kotlinModule()).readValue<ClaimCount>(str)
+        logger.info("Received count $claimCount")
+        claimCount
     }
 }
+
 fun processClaim(): (ByteArray) -> ClaimCreatedEvent {
     return {
         logger.info("Processed claim ${String(it)}")

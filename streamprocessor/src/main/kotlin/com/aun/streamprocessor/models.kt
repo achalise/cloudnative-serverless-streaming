@@ -6,4 +6,4 @@ data class ClaimRequest(var firstName: String, var lastName: String, var email: 
                         var amount: Long, var claimType: String)
 @JsonSerialize
 data class ClaimCreatedEvent(var correlationId: String, var claimRequest: ClaimRequest)
-data class ClaimCount(var claimType: String, var count: Int)
+data class ClaimCount(var claimType: String, var count: Long)
