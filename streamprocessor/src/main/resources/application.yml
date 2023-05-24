@@ -37,7 +37,8 @@ spring:
                 value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
                 key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
       function:
-         definition: claimProcessor;claimRequestProcessor;claimEvents
+        #definition: claimProcessor;claimRequestProcessor;claimEvents
+        definition: claimEvents
       bindings:
         claimProcessor-in-0:
             destination: CLAIMS

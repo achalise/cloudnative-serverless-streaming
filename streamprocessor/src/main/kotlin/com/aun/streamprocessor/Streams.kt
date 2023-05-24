@@ -15,11 +15,11 @@ private val objectMapper = ObjectMapper().registerModule(kotlinModule())
 fun claimsStream(streamsBuilder: StreamsBuilder) {
     val stream = streamsBuilder
         .stream("CLAIMS", Consumed.with(Serdes.String(), Serdes.String()))
-        .peek { k, v ->
+        .peek { _, v ->
             println("received claim $v")
         }
         .map { k, v ->
-            KeyValue("count", 1)
+            KeyValue(objectMapper.readValue(v, ClaimCreatedEvent::class.java).claimRequest.claimType, 1)
         }.groupByKey(Grouped.with(Serdes.String(), Serdes.Integer()))
         .count()
         .toStream()
@@ -27,6 +27,6 @@ fun claimsStream(streamsBuilder: StreamsBuilder) {
             println("mapped stream $k and $v")
         }
         .map { k, v ->
-            KeyValue("count", objectMapper.writeValueAsString(ClaimCount("A", v)))
+            KeyValue("count", objectMapper.writeValueAsString(ClaimCount(k, v)))
         }.to("event-count", Produced.with(Serdes.String(), Serdes.String()))
 }

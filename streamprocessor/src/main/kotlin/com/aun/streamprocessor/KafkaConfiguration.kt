@@ -30,15 +30,15 @@ class KafkaConfiguration {
     @Bean
     fun admin() = KafkaAdmin(mapOf(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress))
 
-    @Bean
-    fun claimProcessor(): (ByteArray) -> ClaimCreatedEvent {
-        return processClaim()
-    }
-
-    @Bean
-    fun claimRequestProcessor(): (ByteArray) -> String {
-        return processClaimRequest()
-    }
+//    @Bean
+//    fun claimProcessor(): (ByteArray) -> ClaimCreatedEvent {
+//        return processClaim()
+//    }
+//
+//    @Bean
+//    fun claimRequestProcessor(): (ByteArray) -> String {
+//        return processClaimRequest()
+//    }
 
     @Bean
     fun claimEvents(): (ByteArray) -> ClaimCount {
