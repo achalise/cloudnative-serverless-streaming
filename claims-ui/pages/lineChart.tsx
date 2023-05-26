@@ -56,6 +56,7 @@ const generateData = () => {
 const SimpleChart = () => {
 
     const [chartData, setChartData] = useState<any[]>([]);
+    const [items, setItems] = useState<any[]>([]);
     const [count, setCount] = useState(0);
 
     // useEffect(() => {
@@ -72,9 +73,62 @@ const SimpleChart = () => {
         eventSource.onmessage = m => {
             console.log(`Received event stream`);
             console.log(m);
-            let claimCount = {...JSON.parse(m.data), name: `Name_${count}`};
-            setCount(prev => prev + 1);
-            setChartData((prevState) => {return [...prevState, claimCount]}); 
+            let claimCount = JSON.parse(m.data);
+            let enrichedClaimCount = {
+                ...claimCount,
+                countA: claimCount.claimType === 'A' ? claimCount.count : 0,
+                countB: claimCount.claimType === 'B' ? claimCount.count : 0,
+                countC: claimCount.claimType === 'C' ? claimCount.count : 0,
+                name: claimCount.timeStamp
+            }
+            setItems(items => {
+                let newItems = [...items, enrichedClaimCount]
+                if (newItems.length === 3) {
+                    updateChartData(newItems);
+                    return [];
+                } else {
+                    return newItems;
+                }
+            })
+
+            const updateChartData = (newItems: any) => {
+
+                setChartData((prevState: any[]) => {
+                    while(prevState.length > 10) { prevState.shift(); }
+                    let res = newItems.reduce((aggregate: any, current: any) => {
+                        aggregate.countB = aggregate.countB + current.countB;
+                        aggregate.countC = aggregate.countC + current.countC;
+                        aggregate.countA = aggregate.countA + current.countA;
+                        aggregate.name = current.name;
+                        return aggregate;
+                    }, { countA: 0, countB: 0, countC: 0, name: '' })
+                    prevState.push(res);
+                    let grouped = {} as any;
+                    prevState.forEach( item => {
+                        if (grouped[item.name]) { grouped[item.name].push(item) } 
+                        else {
+                            grouped[item.name] = [];
+                            grouped[item.name].push(item);
+                        }
+                    });
+                    let aggregated = [] as any;
+                    Object.keys(grouped).forEach (
+                        key => {
+                            let temp = grouped[key];
+                            let res = temp.reduce((aggregate: any, current: any) => {
+                                aggregate.countB = aggregate.countB + current.countB;
+                                aggregate.countC = aggregate.countC + current.countC;
+                                aggregate.countA = aggregate.countA + current.countA;
+                                aggregate.name = key; 
+                                return aggregate;
+                            }, { countA: 0, countB: 0, countC: 0, name: '' });
+                            aggregated = [...aggregated, res]
+                        }
+                    )
+                    
+                    return [...aggregated];
+                });
+            }
             console.log(`the count ${count}`);
         }
         return () => {
@@ -84,27 +138,27 @@ const SimpleChart = () => {
 
     return (
         <>
-        <p>{count}</p>
-        <LineChart
-            width={500}
-            height={300}
-            data={chartData}
-            margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-            }}
-        >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} isAnimationActive={false}/>
-            <Line type="monotone" dataKey="uv" stroke="#82ca9d" isAnimationActive={false}/>
-            <Line type="monotone" dataKey="count" stroke="#82ca9d" isAnimationActive={false}/>
-        </LineChart>
+            <p>{count}</p>
+            <LineChart
+                width={500}
+                height={300}
+                data={chartData}
+                margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                }}
+            >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="countA" stroke="#8884d8" isAnimationActive={false} />
+                <Line type="monotone" dataKey="countB" stroke="#999a9d" isAnimationActive={false} />
+                <Line type="monotone" dataKey="countC" stroke="#82ca9d" isAnimationActive={false} />
+            </LineChart>
         </>
     );
 

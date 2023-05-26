@@ -1,5 +1,11 @@
-package com.aun.streamprocessor
+package com.aun.streamprocessor.config
 
+import com.aun.streamprocessor.ClaimCount
+import com.aun.streamprocessor.ClaimCreatedEvent
+import com.aun.streamprocessor.claims
+import com.aun.streamprocessor.claimsStream
+import com.aun.streamprocessor.processClaim
+import com.aun.streamprocessor.processPayment
 import org.apache.kafka.clients.admin.AdminClientConfig
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -30,15 +36,15 @@ class KafkaConfiguration {
     @Bean
     fun admin() = KafkaAdmin(mapOf(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress))
 
-//    @Bean
-//    fun claimProcessor(): (ByteArray) -> ClaimCreatedEvent {
-//        return processClaim()
-//    }
-//
-//    @Bean
-//    fun claimRequestProcessor(): (ByteArray) -> String {
-//        return processClaimRequest()
-//    }
+    @Bean
+    fun claimProcessor(): (ByteArray) -> ClaimCreatedEvent {
+        return processClaim()
+    }
+
+    @Bean
+    fun paymentProcessor(): (ByteArray) -> String {
+        return processPayment()
+    }
 
     @Bean
     fun claimEvents(): (ByteArray) -> ClaimCount {

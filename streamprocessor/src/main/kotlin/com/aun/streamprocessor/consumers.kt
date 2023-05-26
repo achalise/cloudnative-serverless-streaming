@@ -20,27 +20,27 @@ fun claims(): (ByteArray) -> ClaimCount {
     }
 }
 
-//fun processClaim(): (ByteArray) -> ClaimCreatedEvent {
-//    return {
-//        logger.info("Processed claim ${String(it)}")
-//        val stringValue = String(it)
-//        val mapper = ObjectMapper().registerModule(
-//            KotlinModule.Builder()
-//                .withReflectionCacheSize(512)
-//                .configure(KotlinFeature.NullToEmptyCollection, false)
-//                .configure(KotlinFeature.NullToEmptyMap, false)
-//                .configure(KotlinFeature.NullIsSameAsDefault, false)
-//                .configure(KotlinFeature.SingletonSupport, false)
-//                .configure(KotlinFeature.StrictNullChecks, false)
-//                .build()
-//        )
-//        mapper.readValue<ClaimCreatedEvent>(stringValue)
-//    }
-//}
+fun processClaim(): (ByteArray) -> ClaimCreatedEvent {
+    return {
+        logger.info("Processed claim ${String(it)}")
+        val stringValue = String(it)
+        val mapper = ObjectMapper().registerModule(
+            KotlinModule.Builder()
+                .withReflectionCacheSize(512)
+                .configure(KotlinFeature.NullToEmptyCollection, false)
+                .configure(KotlinFeature.NullToEmptyMap, false)
+                .configure(KotlinFeature.NullIsSameAsDefault, false)
+                .configure(KotlinFeature.SingletonSupport, false)
+                .configure(KotlinFeature.StrictNullChecks, false)
+                .build()
+        )
+        mapper.readValue<ClaimCreatedEvent>(stringValue)
+    }
+}
 
-//fun processClaimRequest(): (ByteArray) -> String {
-//    return {
-//        logger.info("Processed Claim Request ${String(it)}")
-//        "PROCESSED"
-//    }
-//}
+fun processPayment(): (ByteArray) -> String {
+    return {
+        logger.info("Processed Payment ${String(it)}")
+        "PROCESSED"
+    }
+}

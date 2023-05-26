@@ -37,17 +37,17 @@ spring:
                 value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
                 key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
       function:
-        #definition: claimProcessor;claimRequestProcessor;claimEvents
-        definition: claimEvents
+        definition: claimProcessor;paymentProcessor;claimEvents
+        #definition: claimEvents
       bindings:
         claimProcessor-in-0:
             destination: CLAIMS
         claimProcessor-out-0:
-            destination: sinkinput
-        claimRequestProcessor-in-0:
-            destination: sinkinput
-        claimRequestProcessor-out-0:
-            destination: sinkoutput
+            destination: enriched-claims
+        paymentProcessor-in-0:
+            destination: enriched-claims
+        paymentProcessor-out-0:
+            destination: settled-claims
         claimEvents-in-0:
             destination: event-count
         claimEvents-out-0:
