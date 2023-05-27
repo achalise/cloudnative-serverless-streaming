@@ -70,10 +70,30 @@ const SimpleChart = () => {
 
     useEffect(() => {
         const eventSource = new EventSource(`http://localhost:8081/retrieveClaimCount`);
-        eventSource.onmessage = m => {
-            console.log(`Received event stream`);
-            console.log(m);
-            let claimCount = JSON.parse(m.data);
+        const groupByTime = (items: any[]) => {
+            let grouped = {} as any;
+            items.forEach( item => {
+                if (grouped[item.name]) { grouped[item.name].push(item) } 
+                else {
+                    grouped[item.name] = [];
+                    grouped[item.name].push(item);
+                }
+            });
+            return grouped;
+        }
+
+        const aggregate = (items: any[]) => {
+            let res = items.reduce((aggregate: any, current: any) => {
+                aggregate.countB = aggregate.countB + current.countB;
+                aggregate.countC = aggregate.countC + current.countC;
+                aggregate.countA = aggregate.countA + current.countA;
+                aggregate.name = current.name;
+                return aggregate;
+            }, { countA: 0, countB: 0, countC: 0, name: '' });
+            return res;
+        }
+
+        const enrich = (claimCount: any) => {
             let enrichedClaimCount = {
                 ...claimCount,
                 countA: claimCount.claimType === 'A' ? claimCount.count : 0,
@@ -81,6 +101,13 @@ const SimpleChart = () => {
                 countC: claimCount.claimType === 'C' ? claimCount.count : 0,
                 name: claimCount.timeStamp
             }
+            return enrichedClaimCount;
+        }
+        eventSource.onmessage = m => {
+            console.log(`Received event stream`);
+            console.log(m);
+            let claimCount = JSON.parse(m.data);
+            let enrichedClaimCount = enrich(claimCount);
             setItems(items => {
                 let newItems = [...items, enrichedClaimCount]
                 if (newItems.length === 3) {
@@ -95,22 +122,10 @@ const SimpleChart = () => {
 
                 setChartData((prevState: any[]) => {
                     while(prevState.length > 10) { prevState.shift(); }
-                    let res = newItems.reduce((aggregate: any, current: any) => {
-                        aggregate.countB = aggregate.countB + current.countB;
-                        aggregate.countC = aggregate.countC + current.countC;
-                        aggregate.countA = aggregate.countA + current.countA;
-                        aggregate.name = current.name;
-                        return aggregate;
-                    }, { countA: 0, countB: 0, countC: 0, name: '' })
+                    let res = aggregate(newItems);
                     prevState.push(res);
-                    let grouped = {} as any;
-                    prevState.forEach( item => {
-                        if (grouped[item.name]) { grouped[item.name].push(item) } 
-                        else {
-                            grouped[item.name] = [];
-                            grouped[item.name].push(item);
-                        }
-                    });
+                    
+                    let grouped = groupByTime(prevState);
                     let aggregated = [] as any;
                     Object.keys(grouped).forEach (
                         key => {
@@ -122,7 +137,7 @@ const SimpleChart = () => {
                                 aggregate.name = key; 
                                 return aggregate;
                             }, { countA: 0, countB: 0, countC: 0, name: '' });
-                            aggregated = [...aggregated, res]
+                            aggregated.push(res);
                         }
                     )
                     
