@@ -1,4 +1,4 @@
-package com.arun.claimservice
+package com.arun.claimservice.config
 
 import com.arun.claimservice.messaging.KafkaMessageService
 import com.arun.claimservice.messaging.MessageService

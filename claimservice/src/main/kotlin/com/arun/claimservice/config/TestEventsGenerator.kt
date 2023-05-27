@@ -1,5 +1,6 @@
-package com.arun.claimservice
+package com.arun.claimservice.config
 
+import com.arun.claimservice.ClaimRequest
 import com.arun.claimservice.events.ClaimCreatedEvent
 import com.arun.claimservice.messaging.MessageService
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -11,7 +12,7 @@ import kotlin.random.Random
 
 @Configuration
 @EnableScheduling
-@ConditionalOnProperty(value = arrayOf("generate.testevents"), havingValue = "true")
+@ConditionalOnProperty(value = ["generate.testevents"], havingValue = "true")
 class ScheduledJobsConfig(private val messageService: MessageService) {
     @Scheduled(fixedRate = 300)
     fun scheduleFixedRateTask() {
