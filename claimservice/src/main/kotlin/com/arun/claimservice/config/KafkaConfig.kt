@@ -17,13 +17,13 @@ class KafkaConfig {
 
     @Bean
     fun topic1() =
-        TopicBuilder.name("CLAIMS")
+        TopicBuilder.name(claimTopic)
             .build()
 
-    @Bean
-    fun topic2() =
-        TopicBuilder.name("ClaimCreated")
-            .build()
+//    @Bean
+//    fun topic2() =
+//        TopicBuilder.name("ClaimCreated")
+//            .build()
 
     @Bean
     fun messageService(kafkaTemplate: KafkaTemplate<String, String>): MessageService {

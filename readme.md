@@ -8,12 +8,13 @@
       * [Running on Tanzu Application Service(TAS)](#running-on-tas)
       * [Running on OpenShift](#running-on-openshift)
       * [Running on KNative](#running-on-knative)
+   2. [Claim Processor](#claims-processor)
 
 # Introduction 
 
 A sample project exploring event driven architecture and stream processing on serverless platforms.
 
-This a hypothetical claims processing application implemented to illustrate architectural concepts. Customers can submit
+This is a very basic claims processing application implemented to illustrate architectural concepts. Customers can submit
 claim requests which will then be processed according to the business rules resulting in customer getting paid or the
 request being rejected.
 
@@ -25,15 +26,37 @@ The application consists of three main components.
 
 Overall architecture diagram:
 
+ClaimRequest submitted to ClaimService -> produces ClaimCreatedEvent -> ClaimProcessor picks the ClaimCreatedEvent to 
+go through fraud check process to produce PaymentEvent which is processed by payment processor for the final settlement.
+
+
 ## Claim Service
 
-The application exposes a http endpoint for users to submit their claim request. The service is implemented using 
+The application exposes an http endpoint for users to submit their claim request. The service is implemented using 
 Spring Cloud Function following hexagonal architecture principles.
 
 At the core, the service is a function that accepts `ClaimRequest` to produce a `ClaimResponse` output. For simplicity,
-`ClaimRequest` only consists of
+`ClaimRequest` has following attributes:
+```
+{
+   firstName: string,
+   lastName: string,
+   email: string,
+   claimAmount: number,
+   claimType: string
+}
+```
 
 and `ClaimResponse` consists of
+```
+{
+   status: {
+      code: string,
+      messate: string
+   },
+   correlationId: string
+}
+```
 
 Service publishes `event` on a Kafka topic upon receipt of customer claim request.
 
@@ -163,3 +186,21 @@ Following environment variables need to be defined for this function example  - 
 Create an AWS EKS cluster by following [instructions](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) 
 ...
 
+## Claims Processor
+
+## Stream Processor
+
+In the first part, implemented a stream that listens to the `CLAIMS` topic for new claim requests, aggregates them by claim type and publishes
+claim count by type on a new topic. Secondly implemented a REST endpoint via spring cloud function to serve events as they are published
+on this new topic using reactor `Sink`.
+
+### Implement Stream Topology
+### REST API to serve from Stream
+#### SINK set up
+#### Spring Cloud FUnction set up
+### Scheduler to generate test events 
+
+
+
+The function taking KStream as input is not getting invoked, but the others with bytearray inputs are invoked and can also
+be chained together to feed output from one as input to the other.
