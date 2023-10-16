@@ -16,7 +16,7 @@ class KafkaMessageService(private val kafkaTemplate: KafkaTemplate<String, Strin
     private val logger = LoggerFactory.getLogger(MessageService::class.java)
     private val objectMapper = jacksonObjectMapper()
     override fun publishClaimCreatedEvent(event: ClaimCreatedEvent): Mono<SendMessageResult> {
-        return Mono.fromFuture(kafkaTemplate.send(claimTopic, objectMapper.writeValueAsString(event)).completable())
+        return Mono.fromFuture(kafkaTemplate.send(claimTopic, objectMapper.writeValueAsString(event)))
             .map { SendMessageResult("SUCCESS") }
             .doOnSuccess {
                 logger.info("Successfully published event $event")
