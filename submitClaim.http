@@ -1,0 +1,24 @@
+POST http://localhost:8080/submitClaimRequest
+Content-Type: application/json
+
+{
+  "firstName": "Joe",
+  "lastName": "Blogs",
+  "amount": 20,
+  "claimType": "pbk",
+  "email": "test@user.com"
+}
+
+###
+
+POST http://localhost:30000/submitClaimRequest
+Content-Type: application/json
+
+{
+  "firstName": "Joe",
+  "lastName": "Blogs",
+  "amount": 20,
+  "claimType": "pbk",
+  "email": "test@user.com"
+}
+

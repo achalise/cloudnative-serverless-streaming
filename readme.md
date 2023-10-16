@@ -9,6 +9,7 @@
       * [Running on OpenShift](#running-on-openshift)
       * [Running on KNative](#running-on-knative)
    2. [Claim Processor](#claims-processor)
+   3. [Stream Processor](#stream-processor)
 
 # Introduction 
 
@@ -32,7 +33,7 @@ go through fraud check process to produce PaymentEvent which is processed by pay
 
 ## Claim Service
 
-The application exposes an http endpoint for users to submit their claim request. The service is implemented using 
+The application exposes a http endpoint for users to submit their claim request. The service is implemented using 
 Spring Cloud Function following hexagonal architecture principles.
 
 At the core, the service is a function that accepts `ClaimRequest` to produce a `ClaimResponse` output. For simplicity,
@@ -112,6 +113,9 @@ We can start with hosted `kafka` solution, or deploy our own Kafka broker in the
 #### Deployment
 
 - build image using buildpack `./gradlew bootBuildImage`, which will build a local docker image `claimservice:0.0.1-SNAPSHOT`.
+  [!IMPORTANT]
+  Ensure that the thin jar plugin related config is commented out from `build.gradle.kts` to ensure that the image is built 
+  using self-contained fat jar
 - import the image into the cluster so that it is accessible to the deployments
   `k3d image import claimservice:0.0.1-SNAPSHOT -c {cluster-name}`
 - `cd k8s`
@@ -119,7 +123,7 @@ We can start with hosted `kafka` solution, or deploy our own Kafka broker in the
 - `kubectl create -f deployment.yaml`
 - `kubectl create -f service-node-port.yaml` (to create a node port service for local testing)
 
-The service can now be accessed at `localhost:30000`
+The service can now be accessed at `POST http://localhost:30000/submitClaimRequest`
 
 ```http request
 POST http://localhost:30000/submitClaimRequest
@@ -187,6 +191,9 @@ Create an AWS EKS cluster by following [instructions](https://docs.aws.amazon.co
 ...
 
 ## Claims Processor
+
+![img.png](img.png)
+
 
 ## Stream Processor
 
