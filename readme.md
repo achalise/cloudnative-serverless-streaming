@@ -1,6 +1,6 @@
 # Serverless and Data Streaming
-1. [Introduction](#introduction-)
-   1. [Claim Service](##claim-service)
+  1. [Introduction](#introduction-)
+  2. [Claim Service](##claim-service)
       * [Running Locally](#running-locally-for-development)
       * [Running on local k8s](#running-on-local-k8s-cluster)
       * [Running on AWS Lambda](#running-on-aws-lambda)
@@ -8,10 +8,11 @@
       * [Running on Tanzu Application Service(TAS)](#running-on-tas)
       * [Running on OpenShift](#running-on-openshift)
       * [Running on KNative](#running-on-knative)
-   2. [Claim Processor](#claims-processor)
-   3. [Stream Processor](#stream-processor)
+  3. [Claim Processor](#claims-processor)
+  4. [Stream Processor](#stream-processor)
+  5. [ClaimsCount Dashboard](#claim-count-dashboard-ui)
 
-# Introduction 
+## Introduction 
 
 A sample project exploring event driven architecture and stream processing on serverless platforms.
 
@@ -192,6 +193,26 @@ Create an AWS EKS cluster by following [instructions](https://docs.aws.amazon.co
 
 ## Claims Processor
 
+Claims Processor consists of functions that pick up the submitted claims for fraud check and then finalise the payment.
+Following functions carry out fraud checks and processing of the payments. These functions are invoked by kafka message
+listeners defined in `KafkaConfig`.
+
+```kotlin
+fun performFraudCheck(fraudCheckService: FraudCheckService): (ClaimCreatedEvent) -> FraudCheckResult {
+    return {
+       fraudCheckService.performFraudCheck(it)
+    }
+}
+```
+
+```kotlin
+fun performPayment(paymentService: PaymentService): (FraudCheckResult) -> PaymentResult {
+    return {
+        paymentService.performPayment(it)
+    }
+}
+```
+
 ![img.png](img.png)
 
 
@@ -202,9 +223,79 @@ claim count by type on a new topic. Secondly implemented a REST endpoint via spr
 on this new topic using reactor `Sink`.
 
 ### Implement Stream Topology
+
+Stream topology is implemented in
+```kotlin
+    @Bean
+    fun kStream(builder: StreamsBuilder) {
+        claimsStream(builder)
+    }
+```
+The stream topology above calculates number of claims by type in every five-minute window.
+
 ### REST API to serve from Stream
+We can expose a REST api to serve the claim count as processed by the stream. For this we need to first define a sink for
+the topic `event-count` where the claim count events are being published.
+
 #### SINK set up
-#### Spring Cloud FUnction set up
+
+First define a sink
+```kotlin
+    @Bean
+    fun claimCountSink(): Sinks.Many<ClaimCount> {
+        val replaySink = Sinks.many().multicast().onBackpressureBuffer<ClaimCount>()
+        return replaySink
+    }
+```
+And then use this sink for the topic `event-topic` where claim count events are published by the stream.
+
+```kotlin
+@KafkaListener(
+    topics = ["event-count"], groupId = "CONSUMER_ONE",
+    containerFactory = "claimCountKafkaListenerContainerFactory"
+)
+class ClaimCountListener(private val sink: Sinks.Many<ClaimCount>) {
+    private val logger = LoggerFactory.getLogger(ClaimCountListener::class.java)
+
+    @KafkaHandler
+    fun processMessage(claimCount: ClaimCount) {
+        logger.info("Received claim count $claimCount")
+        sink.emitNext(claimCount, { s,e -> true})
+    }
+}
+```
+
+#### Spring Cloud Function set up
+
+Following function exposes `retrieveClaimCount` endpoint which will publish claim count events as server sent events.
+
+```kotlin
+    @Bean
+    fun retrieveClaimCount(claimCountSinks: Sinks.Many<ClaimCount>): () -> Flux<ClaimCount> {
+        return retrieveClaimCountFunction(claimCountSinks)
+    }
+```
+
+### Claim Count Dashboard (UI)
+
+The dashboard uses `EventSource` to streaming event counts from the API to the browser which is then displayed in a 
+line chart.
+
+```typescript
+import {useEffect} from "react";
+
+const eventSource = new EventSource(`http://localhost:8081/retrieveClaimCount`);
+...
+eventSource.onmessage = m => {
+...
+    // display events in the chart
+}
+```
+The react app `claims-ui` can be started by running `npm run dev` and navigate to `http://localhost:3000/claimCount`
+
+
+
+
 ### Scheduler to generate test events 
 
 
