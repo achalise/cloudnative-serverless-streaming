@@ -1,13 +1,13 @@
-package com.arun.claimprocessor
+package claims.claimprocessor
 
-import com.arun.claimprocessor.functions.performFraudCheck
-import com.arun.claimprocessor.functions.performPayment
-import com.arun.claimprocessor.models.ClaimCreatedEvent
-import com.arun.claimprocessor.models.ClaimRequest
-import com.arun.claimprocessor.models.FraudCheckResult
-import com.arun.claimprocessor.models.PaymentResult
-import com.arun.claimprocessor.service.FraudCheckService
-import com.arun.claimprocessor.service.PaymentService
+import claims.claimprocessor.functions.performFraudCheck
+import claims.claimprocessor.functions.performPayment
+import claims.claimprocessor.models.ClaimCreatedEvent
+import claims.claimprocessor.models.ClaimRequest
+import claims.claimprocessor.models.FraudCheckResult
+import claims.claimprocessor.models.PaymentResult
+import claims.claimprocessor.service.FraudCheckService
+import claims.claimprocessor.service.PaymentService
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean

@@ -1,9 +1,9 @@
-package com.arun.claimprocessor.service
+package claims.claimprocessor.service
 
-import com.arun.claimprocessor.models.ClaimCreatedEvent
-import com.arun.claimprocessor.models.FraudCheckResult
-import com.arun.claimprocessor.models.Status
-import com.arun.claimprocessor.models.StatusCode
+import claims.claimprocessor.models.ClaimCreatedEvent
+import claims.claimprocessor.models.FraudCheckResult
+import claims.claimprocessor.models.Status
+import claims.claimprocessor.models.StatusCode
 
 class FraudCheckService {
     fun performFraudCheck(claimCreatedEvent: ClaimCreatedEvent): FraudCheckResult {

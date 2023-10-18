@@ -1,4 +1,4 @@
-package com.arun.claimprocessor.models
+package claims.claimprocessor.models
 
 data class ClaimRequest(var firstName: String = "", var lastName: String = "", var email: String = "",
                         var amount: Long = 0, var claimType: String = "",

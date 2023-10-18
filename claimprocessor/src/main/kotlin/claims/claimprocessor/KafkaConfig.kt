@@ -1,9 +1,9 @@
-package com.arun.claimprocessor
+package claims.claimprocessor
 
-import com.arun.claimprocessor.models.ClaimCreatedEvent
-import com.arun.claimprocessor.models.ClaimRequest
-import com.arun.claimprocessor.models.FraudCheckResult
-import com.arun.claimprocessor.models.PaymentResult
+import claims.claimprocessor.models.ClaimCreatedEvent
+import claims.claimprocessor.models.ClaimRequest
+import claims.claimprocessor.models.FraudCheckResult
+import claims.claimprocessor.models.PaymentResult
 import org.apache.kafka.clients.admin.AdminClientConfig
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig

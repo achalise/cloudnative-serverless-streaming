@@ -1,4 +1,4 @@
-package com.arun.claimprocessor
+package claims.claimprocessor
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
