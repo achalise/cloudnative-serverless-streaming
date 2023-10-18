@@ -1,6 +1,6 @@
-package com.arun.claimservice.service
+package claims.claimservice.service
 
-import com.arun.claimservice.ClaimRequest
+import claims.claimservice.ClaimRequest
 
 class EligibilityService {
     fun isEligible(request: ClaimRequest): Boolean {

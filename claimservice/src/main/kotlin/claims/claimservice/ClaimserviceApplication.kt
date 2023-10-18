@@ -1,4 +1,4 @@
-package com.arun.claimservice
+package claims.claimservice
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

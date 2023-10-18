@@ -1,6 +1,6 @@
-package com.arun.claimservice.persistence
+package claims.claimservice.persistence
 
-import com.arun.claimservice.ClaimRequest
+import claims.claimservice.ClaimRequest
 
 class PersistenceService {
     fun saveClaimRequest(claimRequest: ClaimRequest) {

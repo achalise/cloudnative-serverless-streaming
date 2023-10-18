@@ -1,7 +1,7 @@
-package com.arun.claimservice.config
+package claims.claimservice.config
 
-import com.arun.claimservice.messaging.KafkaMessageService
-import com.arun.claimservice.messaging.MessageService
+import claims.claimservice.messaging.KafkaMessageService
+import claims.claimservice.messaging.MessageService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

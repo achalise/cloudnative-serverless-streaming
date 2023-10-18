@@ -1,8 +1,8 @@
-package com.arun.claimservice.config
+package claims.claimservice.config
 
-import com.arun.claimservice.ClaimRequest
-import com.arun.claimservice.events.ClaimCreatedEvent
-import com.arun.claimservice.messaging.MessageService
+import claims.claimservice.ClaimRequest
+import claims.claimservice.events.ClaimCreatedEvent
+import claims.claimservice.messaging.MessageService
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableScheduling

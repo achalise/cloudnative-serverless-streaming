@@ -1,6 +1,6 @@
-package com.arun.claimservice.messaging
+package claims.claimservice.messaging
 
-import com.arun.claimservice.events.ClaimCreatedEvent
+import claims.claimservice.events.ClaimCreatedEvent
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.core.KafkaTemplate
@@ -12,7 +12,8 @@ interface MessageService {
     }
 }
 
-class KafkaMessageService(private val kafkaTemplate: KafkaTemplate<String, String>, private val claimTopic: String): MessageService {
+class KafkaMessageService(private val kafkaTemplate: KafkaTemplate<String, String>, private val claimTopic: String):
+    MessageService {
     private val logger = LoggerFactory.getLogger(MessageService::class.java)
     private val objectMapper = jacksonObjectMapper()
     override fun publishClaimCreatedEvent(event: ClaimCreatedEvent): Mono<SendMessageResult> {

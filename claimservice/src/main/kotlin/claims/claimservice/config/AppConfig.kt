@@ -1,10 +1,10 @@
-package com.arun.claimservice.config
+package claims.claimservice.config
 
-import com.arun.claimservice.ClaimRequest
-import com.arun.claimservice.ClaimResponse
-import com.arun.claimservice.functions.submitClaim
-import com.arun.claimservice.messaging.MessageService
-import com.arun.claimservice.service.EligibilityService
+import claims.claimservice.ClaimRequest
+import claims.claimservice.ClaimResponse
+import claims.claimservice.functions.submitClaim
+import claims.claimservice.messaging.MessageService
+import claims.claimservice.service.EligibilityService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import reactor.core.publisher.Mono

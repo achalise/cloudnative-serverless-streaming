@@ -1,6 +1,6 @@
-package com.arun.claimservice.events
+package claims.claimservice.events
 
-import com.arun.claimservice.ClaimRequest
+import claims.claimservice.ClaimRequest
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 
 @JsonSerialize
