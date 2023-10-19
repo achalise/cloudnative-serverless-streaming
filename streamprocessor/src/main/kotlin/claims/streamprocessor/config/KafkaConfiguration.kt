@@ -1,11 +1,11 @@
-package com.aun.streamprocessor.config
+package claims.streamprocessor.config
 
-import com.aun.streamprocessor.ClaimCount
-import com.aun.streamprocessor.ClaimCreatedEvent
-import com.aun.streamprocessor.claims
-import com.aun.streamprocessor.claimsStream
-import com.aun.streamprocessor.processClaim
-import com.aun.streamprocessor.processPayment
+import claims.streamprocessor.ClaimCount
+import claims.streamprocessor.ClaimCreatedEvent
+import claims.streamprocessor.claims
+import claims.streamprocessor.claimsStream
+import claims.streamprocessor.processClaim
+import claims.streamprocessor.processPayment
 import org.apache.kafka.clients.admin.AdminClientConfig
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer

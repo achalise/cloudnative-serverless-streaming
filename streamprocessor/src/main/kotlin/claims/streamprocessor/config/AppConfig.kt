@@ -1,6 +1,6 @@
-package com.aun.streamprocessor.config
+package claims.streamprocessor.config
 
-import com.aun.streamprocessor.ClaimCount
+import claims.streamprocessor.ClaimCount
 import functions.retrieveClaimCountFunction
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

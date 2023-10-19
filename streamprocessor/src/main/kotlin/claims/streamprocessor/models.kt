@@ -1,4 +1,4 @@
-package com.aun.streamprocessor
+package claims.streamprocessor
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import java.time.LocalTime

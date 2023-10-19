@@ -1,4 +1,4 @@
-package com.aun.streamprocessor
+package claims.streamprocessor
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

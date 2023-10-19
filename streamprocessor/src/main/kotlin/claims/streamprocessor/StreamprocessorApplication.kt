@@ -1,4 +1,4 @@
-package com.aun.streamprocessor
+package claims.streamprocessor
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
