@@ -14,10 +14,14 @@
 
 ## Introduction 
 
-A sample project exploring event driven architecture and stream processing on serverless platforms.
+There are many benefits to following clean and layered approaches to application architecture such as hexagonal arcthitecture. When application core is decoupled from transport details,the core functionality can be exposed in a manner to suit any business need, for e.g. as a REST endpoint or via asynchronous event listeners. It also means codebase that is testable by design. 
 
-This is a very basic claims processing application implemented to illustrate architectural concepts. Customers can submit
-claim requests which will then be processed according to the business rules resulting in customer getting paid or the
+In the Java world, SpringFramework makes this very easy through Spring Cloud Function project. The idea is our application can be thought of as functions that take an input and produce output. The framework then provides support to deploy these functions as a REST service or via event listeners in a runtime environment of choice - Serverless, Kubernetes or stand alone event listeners.
+
+The sample application illustrates how Spring Cloud Function can be used to write business logic as java functions and deploy anywhere for e.g., to a Serverless platform or as a REST endpoints or asynchronous Kafka event listeners. It also shows how the solution can easility be extended to implement an event streaming architecture, finishing off with an http end point serving Server Sent Events for real time notifications to a Web application.
+
+The sample application implements a very simple Claim Processing solution where Customers can submit
+claim requests that will then be processed according to the business rules resulting in customer getting paid or the
 request being rejected.
 
 The application consists of three main components.
